@@ -216,8 +216,9 @@ def gridPlotSD():
 
 def lnlike(theta,Q2,D,sig,Dbar,sigbar):
     GaS,MA,FS,muS = theta
-    model = xs.NCxsec(Q2,GaS,MA,FS,muS)
-    modelbar = xs.antiNCxsec(Q2,GaS,MA,FS,muS)
+    enu = 1.
+    model = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
+    modelbar = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
     lnlikevec = -0.5*np.square((D-model)/sig)
     lnlikevecbar = -0.5*np.square((Dbar-modelbar)/sigbar)
     return np.sum(lnlikevec) + np.sum(lnlikevecbar)
