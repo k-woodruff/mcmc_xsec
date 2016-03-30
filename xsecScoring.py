@@ -17,8 +17,8 @@ def antixsecRatio(theta,Q2):
 def lnlike(theta,Q2,D,sig,Dbar,sigbar):
     GaS,MA,FS,muS = theta
     enu = 1.
-    model = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)/1.05
-    modelbar = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)/1.09
+    model = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
+    modelbar = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
     lnlikevec = -0.5*np.square((D-model)/sig)
     lnlikevecbar = -0.5*np.square((Dbar-modelbar)/sigbar)
     return np.sum(lnlikevec) + np.sum(lnlikevecbar)
@@ -61,16 +61,41 @@ def MCburnin(nwalkers,steps):
     triangle.corner(samples,labels=[r'$\Delta s$',r'$M_A$',r'$F_1^S$',r'$\mu_S$'],quantiles=[0.05,0.5,0.95])
     return samples
 
-def MCRat(nwalkers,steps):
-    Q2,enu,D,DBar = xs.getUBMCdat()
+def PTMCburnin(nwalkers,steps):
+    Q2,D,sig,Dbar,sigbar = xs.getE734dat()
     ndim = 4
-    startpos = [[-.13,1.032,0.49,-0.39] + 5e-3*np.random.randn(ndim) for i in range(nwalkers)]
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprobUB, args=(Q2,enu,D,DBar))
-    sampler.run_mcmc(startpos,8000)
-    bipos = sampler.chain[:,-1,:].reshape((-1,ndim))
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprobUB, args=(Q2,enu,D,DBar))
-    sampler.run_mcmc(bipos,steps)
-    samples = sampler.chain[:,:,:].reshape((-1, ndim))
+    ntemps = 40
+    #startpos = [[[-.13,1.032,0.49,-0.39] + 5e-3*np.random.randn(ndim) for i in range(nwalkers)] for i in range(ntemps)]
+    startpos = [[[0,0,0,0] + 5e-3*np.random.randn(ndim) for i in range(nwalkers)] for i in range(ntemps)]
+    sampler = emcee.PTSampler(ntemps,nwalkers, ndim, lnlike, lnprior, threads=6, loglargs=(Q2,D,sig,Dbar,sigbar))
+    for p,logprob, loglike in sampler.sample(startpos,iterations=800):
+        pass
+    sampler.reset()
+    #sampler.run_mcmc(startpos,800)
+    #bipos = sampler.chain[:,-1,:].reshape((-1,ndim))
+    sampler = emcee.PTSampler(ntemps, nwalkers, ndim, lnlike, lnprior, threads=6, loglargs=(Q2,D,sig,Dbar,sigbar))
+    for p, logprob, loglike in sampler.sample(p, lnprob0=logprob, lnlike0=loglike,iterations=steps):
+        pass
+    #sampler.run_mcmc(bipos,steps)
+    #samples = sampler.flatchain.reshape((-1, ndim))
+    samples = sampler.chain[:,:,:,:].reshape((-1, ndim))
+    triangle.corner(samples,labels=[r'$\Delta s$',r'$M_A$',r'$F_1^S$',r'$\mu_S$'],quantiles=[0.05,0.5,0.95])
+    return samples
+
+def PTMCRat(nwalkers,steps):
+    Q2,enu,D,sig = xs.getUBMCdat()
+    ndim = 4
+    ntemps = 40
+    startpos = [[[0,0,0,0] + 5e-3*np.random.randn(ndim) for i in range(nwalkers)] for i in range(ntemps)]
+    sampler = emcee.PTSampler(ntemps,nwalkers, ndim, lnlikeUB, lnprior, threads=6, loglargs=(Q2,enu,D,sig))
+    for p,logprob, loglike in sampler.sample(startpos,iterations=800):
+        pass
+    sampler.reset()
+    #bipos = sampler.chain[:,-1,:].reshape((-1,ndim))
+    sampler = emcee.PTSampler(ntemps,nwalkers, ndim, lnlikeUB, lnprior, threads=6, loglargs=(Q2,enu,D,sig))
+    for p, logprob, loglike in sampler.sample(p, lnprob0=logprob, lnlike0=loglike,iterations=steps):
+        pass
+    samples = sampler.chain[:,:,:,:].reshape((-1, ndim))
     triangle.corner(samples,labels=[r'$\Delta s$',r'$M_A$',r'$F_1^S$',r'$\mu_S$'],quantiles=[0.05,0.5,0.95])
     return samples
     
