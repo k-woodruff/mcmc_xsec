@@ -1,5 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
+import scipy.stats as st
 
 Mp        = 0.938272
 Mmu       = 0.106
@@ -12,54 +12,6 @@ hc        = .197e-13
 gA        = 1.267
 mup       = 2.7930
 mun       = -1.913042
-
-def getE734dat():
-    ''' E734 published data points '''
-    # Q2 bin centers
-    Q2       = np.linspace(0.45,1.05,7)
-    # nu-p nce cross sections
-    data     = np.array([1.65,1.09,.803,.657,.447,.294,.205])*1e-39
-    #sig_stat = np.array([.11,.08,.076,.064,.073,.064,.057])*1e-39
-    # calculate systematic uncertainty
-    #sig_qdep = np.array([0.15,0.08,0.03,0.02,0.03,0.04,0.06])
-    #sig_syst = data*(0.112 + sig_qdep)
-    #sig      = sig_stat + sig_syst
-    sig      = np.array([0.33,0.17,0.12,0.098,0.09,0.073,0.063])*1e-39
-
-    # nubar-p nce cross sections
-    databar     = np.array([.756,.426,.283,.184,.129,.108,.101])*1e-39
-    #sigbar_stat = np.array([.048,.026,.021,.019,.018,.018,.024])*1e-39
-    # calculate systematic uncertainty
-    #sigbar_qdep = np.array([0.18,0.08,0.03,0.02,0.03,0.04,0.06])
-    #sigbar_syst = databar*(0.104 + sigbar_qdep)
-    #sigbar      = sigbar_stat + sigbar_syst
-    sigbar      = np.array([0.164,0.062,0.037,0.027,0.023,0.022,0.027])*1e-39
-
-    return Q2,data,sig,databar,sigbar
-
-def getUBMCdat():
-    ''' MicroBooNE Sim. data from Genie (via LArSoft) '''
-    '''
-    # not sure where these came from??
-    # Q2 bin centers
-    Q2   = np.linspace(0.1,1.85,19)
-    # nu-p nce cross sections
-    data = np.array([.1547,.1569,.1280,.12,.1188,.1376,.1441,.1290,.1111,.1579])
-    sig  = np.array([.78,.93,1.12,1.41,1.92,2.83,3.74,4.85,6.76,9.81])*1e-2
-    data = np.array([.1436,.1649,.1612,.1512,.1387,.1142,.1489,.0836,.0957,.1503,.1368,.1392,.1864,.1017,.1351,.12,.1333,.0833,.3333])
-    sig  = np.array([.0108,.0112,.0125,.0139,.0156,.0160,.0213,.0174,.0224,.0336,.0365,.0448,.0612,.0436,.0644,.0733,.1004,.0867,.2222])
-    '''
-    # ratio of NCEp to CCQEn in larsoft sim
-    Q2   = np.linspace(0.05,1.85,19)
-    data = np.array([6.65,7.84,7.67,7.01,8.76,7.19,6.98,7.92,7.04,8.91,6.41,6.90,6.07,6.73,7.41,7.44,7.76,2.47,1.75])*1e-2
-    sig  = np.array([0.34,0.35,0.37,0.42,0.55,0.57,0.65,0.80,0.85,1.19,1.12,1.33,1.52,1.79,2.22,2.57,2.68,1.77,1.77])*1e-2
-    # Using rough peaks
-    #enu  = np.array([.7,.72,.79,.85,.99,1.0,1.1,1.15,1.22,1.26,1.3,1.4,1.45,1.45,1.48,1.7,1.75,1.75,1.85])
-    # Using means
-    #enu  = np.array([.963,.982,1.04,1.10,1.19,1.23,1.31,1.40,1.43,1.56,1.46,1.61,1.69,1.81,1.04,2.13,2.10,2.59,2.81])
-    enu = 1.
-
-    return Q2,enu,data,sig
 
 def NCxsec(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
@@ -159,7 +111,7 @@ def antiNCxsec(Q2,enu,GaS,MA,FS,muS):
 
     return dsigNC*hc**2
 
-def NCxsecSum(Q2,GaS,MA,FS,muS):
+def NCxsecSum(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
     su  = 4.*Mp*enu - Q2
     alp = 1 - 2.*sin2theta
@@ -193,7 +145,7 @@ def NCxsecSum(Q2,GaS,MA,FS,muS):
 
     return sigsum*hc**2
 
-def NCxsecDiff(Q2,GaS,MA,FS,muS):
+def NCxsecDiff(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
     su  = 4.*Mp*enu - Q2
     alp = 1 - 2.*sin2theta
@@ -220,4 +172,28 @@ def NCxsecDiff(Q2,GaS,MA,FS,muS):
     sigdiff = GF**2/(4.*pival*enu**2)*B*su/Mp**2
 
     return sigdiff*hc**2
+
+
+def lnprior(theta):
+  
+    ''' prior log prob for each param. in theta '''
+    ''' needs work/thought '''
+
+    GaS,MA,FS,muS = theta
+
+    lpGaS = st.norm.logpdf(GaS,0.,.5)
+    lpMA  = st.norm.logpdf(MA,1.0,.5)
+    lpFS  = st.norm.logpdf(FS,0.,.5)
+    lpmuS = st.norm.logpdf(muS,0.,.5)
+    '''
+    if 
+    if MA < 0.:
+        lpMA = -np.inf
+    else:
+        lpMA = st.norm.logpdf(MA,1.05,1.)
+    if -1. < GaS < 1. and .996 < MA < 1.068 and -.21 < FS < 1.19 and -1.09 < muS < .310:
+        return 0.0
+    return -np.inf
+    '''
+    return lpmuS+lpFS+lpGaS+lpMA
 
