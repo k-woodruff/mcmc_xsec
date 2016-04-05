@@ -174,26 +174,32 @@ def NCxsecDiff(Q2,enu,GaS,MA,FS,muS):
     return sigdiff*hc**2
 
 
-def lnprior(theta):
+def lnprior(theta,form='informative'):
   
     ''' prior log prob for each param. in theta '''
     ''' needs work/thought '''
 
     GaS,MA,FS,muS = theta
 
-    lpGaS = st.norm.logpdf(GaS,0.,.5)
-    lpMA  = st.norm.logpdf(MA,1.0,.5)
-    lpFS  = st.norm.logpdf(FS,0.,.5)
-    lpmuS = st.norm.logpdf(muS,0.,.5)
-    '''
-    if 
-    if MA < 0.:
-        lpMA = -np.inf
-    else:
-        lpMA = st.norm.logpdf(MA,1.05,1.)
-    if -1. < GaS < 1. and .996 < MA < 1.068 and -.21 < FS < 1.19 and -1.09 < muS < .310:
+    if form == 'informative':
+        # get prior from previous experiments
+        lpGaS = st.norm.logpdf(GaS,0.,.5)
+        lpMA  = st.norm.logpdf(MA,1.0,.5)
+        lpFS  = st.norm.logpdf(FS,0.,.5)
+        lpmuS = st.norm.logpdf(muS,0.,.5)
+
+        return lpmuS+lpFS+lpGaS+lpMA
+
+    if form == 'uniform':
+        # uniform prior --> likelihood
         return 0.0
-    return -np.inf
-    '''
-    return lpmuS+lpFS+lpGaS+lpMA
+
+    if form == 'reasonable':
+        # use sane, but loose priors on theta
+        # if in these ranges p=1, otherwise p=0
+        if -1. < GaS < 1. and .5 < MA < 2. and -1. < FS < 1.5 and -1.5 < muS < 1.:
+            return 0.0
+        return -np.inf
+
+
 
