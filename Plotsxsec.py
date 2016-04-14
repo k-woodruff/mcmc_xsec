@@ -7,7 +7,7 @@ Some plots of surfaces and distributions
 '''
 
 # this defines which data we are using (ex: e734,uboone_mc,uboone_data)
-import uboone_mc as expmt
+import e734 as expmt
 
 def gridPlot2D(numpts):
 
@@ -134,7 +134,7 @@ def gridPlot(numpts):
 def makeSamplePlot(samples):
     # get data
     Q2,enu,D   = expmt.getdata()
-    data,sig   = D
+    data,sig,databar,sigbar   = D
 
     y = np.zeros((len(Q2),len(samples[:,0])))
     for i in range(len(samples[:,0])):

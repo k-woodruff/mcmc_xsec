@@ -175,6 +175,9 @@ def NCxsecDiff(Q2,enu,GaS,MA,FS,muS):
 
 
 def lnprior(theta,form='informative'):
+
+    formopts = ['informative','uniform','reasonable']
+    assert form in formopts, 'not a valid prior option'
   
     ''' prior log prob for each param. in theta '''
     ''' needs work/thought '''

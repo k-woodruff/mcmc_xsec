@@ -2,6 +2,7 @@ import numpy as np
 import CCNCxsec as xs
 import emcee
 import triangle
+import time
 
 '''
 Examples of ways to run different algorithms for single experiments
@@ -29,13 +30,25 @@ def MCEnsemble(nwalkers,steps,burnin=1000):
     triangle.corner(samples,labels=[r'$\Delta s$',r'$M_A$',r'$F_1^S$',r'$\mu_S$'],quantiles=[0.05,0.5,0.95])
     return samples
 
-def MCParTemp(nwalkers,steps,ntemps=40,burnin=100,threads=6):
+def MCParTemp(nwalkers,steps,ntemps=40,burnin=100,threads=1):
+    t1 = time.time()
     # use emcee parallel tempering sampler to find prob. surface
     ndim = 4
     startpos = [[[0,0,0,0] + 5e-3*np.random.randn(ndim) for i in range(nwalkers)] for i in range(ntemps)]
 
+    # time how long it should take
+    t0 = time.time()
+    testpos = [[[0,0,0,0] + 5e-3*np.random.randn(4) for i in range(8)] for i in range(8)]
+    sampler  = emcee.PTSampler(8,8, 4, lnlike, xs.lnprior, threads=threads)
+    for ptest,logprobtest, logliketest in sampler.sample(testpos,iterations=10):
+        pass
+    sampler.reset()
+    tdiff = time.time() - t0
+    esttime = ntemps/8.*nwalkers/8.*(burnin+steps)/10.*tdiff/60.
+    print 'Estimated time = {} minutes'.format(esttime)
+
     # burn-in for defined number of steps (default=100)
-    sampler  = emcee.PTSampler(ntemps,nwalkers, ndim, lnlike, xs.lnprior, threads=6)
+    sampler  = emcee.PTSampler(ntemps,nwalkers, ndim, lnlike, xs.lnprior, threads=threads)
     for p,logprob, loglike in sampler.sample(startpos,iterations=burnin):
         pass
     sampler.reset()
@@ -45,8 +58,10 @@ def MCParTemp(nwalkers,steps,ntemps=40,burnin=100,threads=6):
     for p, logprob, loglike in sampler.sample(p, lnprob0=logprob, lnlike0=loglike,iterations=steps):
         pass
 
+    print 'Time: {} minutes'.format(time.time() - t0)
     samples = sampler.chain[:,:,:,:].reshape((-1, ndim))
     triangle.corner(samples,labels=[r'$\Delta s$',r'$M_A$',r'$F_1^S$',r'$\mu_S$'],quantiles=[0.05,0.5,0.95])
+    print sampler.thermodynamic_integration_log_evidence(fburnin=0)
     return samples
 
 def lnlike(theta):
