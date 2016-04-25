@@ -36,8 +36,8 @@ def lnlike(theta):
     ''' simultaneous nu/antinu nc-p xsec log likelihood '''
 
     GaS,MA,FS,muS           = theta
-    model                   = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
-    modelbar                = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
+    model                   = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
+    modelbar                = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muS)
     lnlikevec               = -0.5*np.square((data-model)/sig)
     lnlikevecbar            = -0.5*np.square((databar-modelbar)/sigbar)
 

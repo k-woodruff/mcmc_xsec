@@ -34,7 +34,7 @@ def lnlike(theta):
     ''' ratio of cross-sections log likelihood '''
 
     GaS,MA,FS,muS = theta
-    ncxs          = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
+    ncxs          = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
     ccxs          = xs.CCxsec(Q2,enu,MA)
     model         = ncxs/ccxs
     lnlikevec     = -0.5*np.square((data-model)/sig)

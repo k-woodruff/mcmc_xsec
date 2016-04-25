@@ -13,14 +13,14 @@ gA        = 1.267
 mup       = 2.7930
 mun       = -1.913042
 
-def NCxsec(Q2,enu,GaS,MA,FS,muS):
+def NCpxsec(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
     su  = 4.*Mp*enu - Q2
     alp = 1 - 2.*sin2theta
     gam = -2./3.*sin2theta
 
     '''
-    NCE cross section
+    NCEp cross section
     '''
     # form factors
     denom = (1+Q2/Mv**2)**2
@@ -49,12 +49,48 @@ def NCxsec(Q2,enu,GaS,MA,FS,muS):
 
     return dsigNC*hc**2
 
+def NCnxsec(Q2,enu,GaS,MA,FS,muS):
+    tau = Q2/(4.*Mp**2)
+    su  = 4.*Mp*enu - Q2
+    alp = 1 - 2.*sin2theta
+    gam = -2./3.*sin2theta
+
+    '''
+    NCEn cross section
+    '''
+    # form factors
+    denom = (1+Q2/Mv**2)**2
+
+    FAS  = GaS/(1+Q2/MA**2)**2
+    F1S  = FS*Q2/((1+tau)*denom)
+    F2S  = muS/((1+tau)*denom)
+
+    Fv0 = 1.5*(mup+mun)/((1+tau)*denom)
+    Fv3 = 0.5*(mun-mup)/((1+tau)*denom)
+    Gv0 = 1.5*(1+mup+mun)/denom
+    Gv3 = 0.5*(1+mun-mup)/denom
+
+    FA = -.5*gA/(1 + Q2/MA**2)**2 - .5*FAS
+    F2 = alp*Fv3 + gam*Fv0 - .5*F2S
+    F1 = alp*Gv3 + gam*Gv0 - alp*Fv3 - gam*Fv0 - .5*F1S
+
+    # terms
+    A = Q2/Mp**2*((1+tau)*FA**2 - (1-tau)*F1**2 + tau*(1-tau)*F2**2 \
+          + 4.*tau*F1*F2)
+    B = Q2/Mp**2*FA*(F1 + F2)
+    C = 1./4.*(FA**2 + F1**2 + tau*F2**2)
+
+    # cross-section
+    dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A + B*su/Mp**2 + C*su**2/Mp**4)
+
+    return dsigNC*hc**2
+
 def CCxsec(Q2,enu,MA):
     tau = Q2/(4.*Mp**2)
     su  = 4.*Mp*enu - Q2 - Mmu**2
 
     '''
-    CCQE cross section
+    CCQEn cross section
     '''
     # form factors
     denom = (1+Q2/Mv**2)**2
@@ -75,14 +111,14 @@ def CCxsec(Q2,enu,MA):
 
     return dsigCC*hc**2
 
-def antiNCxsec(Q2,enu,GaS,MA,FS,muS):
+def antiNCpxsec(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
     su  = 4.*Mp*enu - Q2
     alp = 1 - 2.*sin2theta
     gam = -2./3.*sin2theta
 
     '''
-    anti-nu NCE cross section
+    anti-nu NCEp cross section
     '''
     # form factors
     denom = (1+Q2/Mv**2)**2
@@ -97,6 +133,42 @@ def antiNCxsec(Q2,enu,GaS,MA,FS,muS):
     Gv3 = 0.5*(1+mup-mun)/denom
 
     FA = 0.5*gA/(1 + Q2/MA**2)**2 - .5*FAS
+    F2 = alp*Fv3 + gam*Fv0 - .5*F2S
+    F1 = alp*Gv3 + gam*Gv0 - alp*Fv3 - gam*Fv0 - .5*F1S
+
+    # terms
+    A = Q2/Mp**2*((1+tau)*FA**2 - (1-tau)*F1**2 + tau*(1-tau)*F2**2 \
+          + 4.*tau*F1*F2)
+    B = Q2/Mp**2*FA*(F1 + F2)
+    C = 1./4.*(FA**2 + F1**2 + tau*F2**2)
+
+    # cross-section
+    dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A - B*su/Mp**2 + C*su**2/Mp**4)
+
+    return dsigNC*hc**2
+
+def antiNCnxsec(Q2,enu,GaS,MA,FS,muS):
+    tau = Q2/(4.*Mp**2)
+    su  = 4.*Mp*enu - Q2
+    alp = 1 - 2.*sin2theta
+    gam = -2./3.*sin2theta
+
+    '''
+    anti-nu NCEp cross section
+    '''
+    # form factors
+    denom = (1+Q2/Mv**2)**2
+   
+    FAS  = GaS/(1+Q2/MA**2)**2
+    F1S  = FS*Q2/((1+tau)*denom)
+    F2S  = muS/((1+tau)*denom)
+
+    Fv0 = 1.5*(mup+mun)/((1+tau)*denom)
+    Fv3 = 0.5*(mun-mup)/((1+tau)*denom)
+    Gv0 = 1.5*(1+mup+mun)/denom
+    Gv3 = 0.5*(1+mun-mup)/denom
+
+    FA = -0.5*gA/(1 + Q2/MA**2)**2 - .5*FAS
     F2 = alp*Fv3 + gam*Fv0 - .5*F2S
     F1 = alp*Gv3 + gam*Gv0 - alp*Fv3 - gam*Fv0 - .5*F1S
 
