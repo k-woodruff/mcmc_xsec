@@ -139,7 +139,7 @@ def makeSamplePlot(samples):
     y = np.zeros((len(Q2),len(samples[:,0])))
     for i in range(len(samples[:,0])):
         theta  = samples[i,:]
-        y[:,i] = xs.NCxsec(Q2,enu,theta[0],theta[1],theta[2],theta[3])
+        y[:,i] = xs.NCpxsec(Q2,enu,theta[0],theta[1],theta[2],theta[3])
 
     plt.plot(Q2,y,color='steelblue',alpha=0.05)
     plt.errorbar(Q2,data,yerr=sig,fmt='o',color='tomato')

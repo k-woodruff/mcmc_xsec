@@ -9,7 +9,7 @@ Examples of ways to run different algorithms for single experiments
 '''
 
 # this defines which data we are using (ex: e734,uboone_mc,uboone_data)
-import uboone_mc as expmt
+import e734 as expmt
 
 def optimization():
     # use scipy optimize to minimize neg. log likelihood
