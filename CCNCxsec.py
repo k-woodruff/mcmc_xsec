@@ -145,7 +145,7 @@ def antiNCnxsec(Q2,enu,GaS,MA,FS,muS):
     # cross-section
     dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A - B*su/Mp**2 + C*su**2/Mp**4)
 
-    return dsigNC*hc**2
+    return dsigNC
 
 def NCxsecSum(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
@@ -179,7 +179,7 @@ def NCxsecSum(Q2,enu,GaS,MA,FS,muS):
 
     sigsum = GF**2*Mp**2/(4.*pival*enu**2)*(A + C*su**2/Mp**4)
 
-    return sigsum*hc**2
+    return sigsum
 
 def NCxsecDiff(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
@@ -207,7 +207,7 @@ def NCxsecDiff(Q2,enu,GaS,MA,FS,muS):
     
     sigdiff = GF**2/(4.*pival*enu**2)*B*su/Mp**2
 
-    return sigdiff*hc**2
+    return sigdiff
 
 
 def lnprior(theta,form='informative'):
@@ -314,7 +314,7 @@ def oldNCnxsec(Q2,enu,GaS,MA,FS,muS):
     # cross-section
     dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A + B*su/Mp**2 + C*su**2/Mp**4)
 
-    return dsigNC*hc**2
+    return dsigNC
 
 def oldantiNCpxsec(Q2,enu,GaS,MA,FS,muS):
     tau = Q2/(4.*Mp**2)
@@ -350,7 +350,7 @@ def oldantiNCpxsec(Q2,enu,GaS,MA,FS,muS):
     # cross-section
     dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A - B*su/Mp**2 + C*su**2/Mp**4)
 
-    return dsigNC*hc**2
+    return dsigNC
 
 
 

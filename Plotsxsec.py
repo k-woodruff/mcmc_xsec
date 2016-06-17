@@ -145,6 +145,21 @@ def makeSamplePlot(samples):
     plt.errorbar(Q2,data,yerr=sig,fmt='o',color='tomato')
     #plt.yscale('log')
 
+def makeRecreatePlot():
+    # get data
+    Q2,enu,D   = expmt.getdata()
+    data,sig,databar,sigbar   = D
+
+    y    = xs.NCpxsec(Q2,enu,-0.12,1.06,0,0)*1.05
+    ybar = xs.antiNCpxsec(Q2,enu,-0.12,1.06,0,0)*1.09
+
+    plt.plot(Q2,y,color='steelblue',alpha=0.8)
+    plt.errorbar(Q2,data,yerr=sig,fmt='o',color='tomato')
+
+    plt.plot(Q2,ybar,color='darkviolet',alpha=0.8)
+    plt.errorbar(Q2,databar,yerr=sigbar,fmt='o',color='lime')
+    plt.yscale('log')
+
 def makeSampleRatioPlot(samples):
     # get data
     Q2,enu,D   = expmt.getdata()
