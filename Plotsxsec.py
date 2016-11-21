@@ -150,13 +150,14 @@ def makeRecreatePlot():
     Q2,enu,D   = expmt.getdata()
     data,sig,databar,sigbar   = D
 
-    y    = xs.NCpxsec(Q2,enu,-0.12,1.06,0,0)*1.05
-    ybar = xs.antiNCpxsec(Q2,enu,-0.12,1.06,0,0)*1.09
+    Q2ln  = np.linspace(0.35,1.15,10)
+    y    = xs.NCpxsec(Q2ln,enuln,-0.12,1.06,0,0)*1.05
+    ybar = xs.antiNCpxsec(Q2ln,enuln,-0.12,1.06,0,0)*1.09
 
-    plt.plot(Q2,y,color='steelblue',alpha=0.8)
+    plt.plot(Q2ln,y,color='steelblue',alpha=0.8)
     plt.errorbar(Q2,data,yerr=sig,fmt='o',color='tomato')
 
-    plt.plot(Q2,ybar,color='darkviolet',alpha=0.8)
+    plt.plot(Q2ln,ybar,color='darkviolet',alpha=0.8)
     plt.errorbar(Q2,databar,yerr=sigbar,fmt='o',color='lime')
     plt.yscale('log')
 
@@ -184,8 +185,8 @@ def makePlot():
     MA  = 1.061
     GaS = -.12
 
-    yTruth    = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
-    yTruthBar = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
+    yTruth    = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
+    yTruthBar = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muS)
 
     # Data points
     Q,enu,D  = expmt.getdata()
@@ -200,11 +201,11 @@ def makePlot():
     GaSvec = np.linspace(-.5,.3,50)
     y = np.zeros((len(Q2),len(GaSvec)))
     ybar = np.zeros((len(Q2),len(GaSvec)))
-    ymin = xs.NCxsec(Q2,enu,GaSvec[0],MA,FS,muS)
-    yminbar = xs.antiNCxsec(Q2,enu,GaSvec[0],MA,FS,muS)
+    ymin = xs.NCpxsec(Q2,enu,GaSvec[0],MA,FS,muS)
+    yminbar = xs.antiNCpxsec(Q2,enu,GaSvec[0],MA,FS,muS)
     for i,GaS in enumerate(GaSvec):
-        y[:,i] = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
-        ybar[:,i] = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
+        y[:,i] = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
+        ybar[:,i] = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muS)
     
     ax[0,0].plot(Q2,y,color='steelblue',alpha=0.7)
     ax[0,0].plot(Q2,ymin,color='steelblue',linewidth=3)
@@ -224,11 +225,11 @@ def makePlot():
     GaS = -.12
     y = np.zeros((len(Q2),len(MAvec)))
     ybar = np.zeros((len(Q2),len(MAvec)))
-    ymin = xs.NCxsec(Q2,enu,GaS,MAvec[0],FS,muS)
-    yminbar = xs.antiNCxsec(Q2,enu,GaS,MAvec[0],FS,muS)
+    ymin = xs.NCpxsec(Q2,enu,GaS,MAvec[0],FS,muS)
+    yminbar = xs.antiNCpxsec(Q2,enu,GaS,MAvec[0],FS,muS)
     for i,MA in enumerate(MAvec):
-        y[:,i] = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
-        ybar[:,i] = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
+        y[:,i] = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
+        ybar[:,i] = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muS)
 
     ax[0,1].plot(Q2,y,color='green',alpha=0.7)
     ax[0,1].plot(Q2,ymin,color='green',linewidth=3)
@@ -248,11 +249,11 @@ def makePlot():
     GaS = -.12
     y = np.zeros((len(Q2),len(FSvec)))
     iybar = np.zeros((len(Q2),len(FSvec)))
-    ymin = xs.NCxsec(Q2,enu,GaS,MA,FSvec[0],muS)
-    yminbar = xs.antiNCxsec(Q2,enu,GaS,MA,FSvec[0],muS)
+    ymin = xs.NCpxsec(Q2,enu,GaS,MA,FSvec[0],muS)
+    yminbar = xs.antiNCpxsec(Q2,enu,GaS,MA,FSvec[0],muS)
     for i,FS in enumerate(FSvec):
-        y[:,i] = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
-        ybar[:,i] = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
+        y[:,i] = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
+        ybar[:,i] = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muS)
 
     ax[1,0].plot(Q2,y,color='darkorange',alpha=0.7)
     ax[1,0].plot(Q2,ymin,color='darkorange',linewidth=3)
@@ -272,11 +273,11 @@ def makePlot():
     GaS = -.12
     y = np.zeros((len(Q2),len(muSvec)))
     ybar = np.zeros((len(Q2),len(muSvec)))
-    ymin = xs.NCxsec(Q2,GaS,MA,FS,muSvec[0])
-    yminbar = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muSvec[0])
+    ymin = xs.NCpxsec(Q2,enu,GaS,MA,FS,muSvec[0])
+    yminbar = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muSvec[0])
     for i,muS in enumerate(muSvec):
-        y[:,i] = xs.NCxsec(Q2,enu,GaS,MA,FS,muS)
-        ybar[:,i] = xs.antiNCxsec(Q2,enu,GaS,MA,FS,muS)
+        y[:,i] = xs.NCpxsec(Q2,enu,GaS,MA,FS,muS)
+        ybar[:,i] = xs.antiNCpxsec(Q2,enu,GaS,MA,FS,muS)
 
     ax[1,1].plot(Q2,y,color='orchid',alpha=0.7)
     ax[1,1].plot(Q2,ymin,color='orchid',linewidth=3)

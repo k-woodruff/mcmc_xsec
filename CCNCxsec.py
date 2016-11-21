@@ -6,11 +6,12 @@ Mmu       = 0.106
 Mpi       = 0.140
 pival     = np.pi
 Mv        = 0.840
-sin2theta = 0.2277
+#sin2theta = 0.2277
+sin2theta = 0.220
 hc        = .197e-13
 GF        = 1.166e-5*hc
-gA        = -1.267          # changed for sams
-mup       = 2.7930
+gA        = -1.267
+mup       = 1.7930
 mun       = -1.913042
 
 def NCpxsec(Q2,enu,GaS,MA,FS,muS):
@@ -23,9 +24,9 @@ def NCpxsec(Q2,enu,GaS,MA,FS,muS):
     F1S = FS*Q2/denom 
     F2S = muS/denom 
 
-    FA  = gA/(2.*(1 + Q2/MA**2)**2) + FAS/2.
-    F1  = (0.5 - sin2theta)*(1+tau*(1+mup-mun))/denom - sin2theta*(1+tau*(1+mup+mun))/denom - 0.5*F1S
-    F2  = (0.5 - sin2theta)*(mup-mun)/denom - sin2theta*(mup+mun)/denom
+    FA  = -0.5*gA/(1 + Q2/MA**2)**2 - 0.5*FAS
+    F1  = (0.5 - sin2theta)*(1+tau*(1+mup-mun))/denom - sin2theta*(1+tau*(1+mup+mun) + 2.*(mup+mun))/denom - 0.5*F1S
+    F2  = (0.5 - sin2theta)*(mup-mun)/denom - sin2theta*(mup+mun)/denom -0.5*F2S
 
     # terms
     A   = (Q2/Mp**2)*((1+tau)*FA**2 - (1-tau)*F1**2 + tau*(1-tau)*F2**2 + 4.*tau*F1*F2)
@@ -33,7 +34,7 @@ def NCpxsec(Q2,enu,GaS,MA,FS,muS):
     C   = 0.25*(FA**2 + F1**2 + tau*F2**2)
     
     # cross-section
-    dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A - (su/Mp**2)*B + (su**2/Mp**4)*C)
+    dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A + (su/Mp**2)*B + (su**2/Mp**4)*C)
 
     return dsigNC
 
@@ -97,9 +98,9 @@ def antiNCpxsec(Q2,enu,GaS,MA,FS,muS):
     F1S = FS*Q2/denom 
     F2S = muS/denom 
 
-    FA  = gA/(2.*(1 + Q2/MA**2)**2) + FAS/2.
+    FA  = -0.5*gA/(1 + Q2/MA**2)**2 - 0.5*FAS
     F1  = (0.5 - sin2theta)*(1+tau*(1+mup-mun))/denom - sin2theta*(1+tau*(1+mup+mun))/denom - 0.5*F1S
-    F2  = (0.5 - sin2theta)*(mup-mun)/denom - sin2theta*(mup+mun)/denom
+    F2  = (0.5 - sin2theta)*(mup-mun)/denom - sin2theta*(mup+mun)/denom - 0.5*F2S
 
     # terms
     A   = (Q2/Mp**2)*((1+tau)*FA**2 - (1-tau)*F1**2 + tau*(1-tau)*F2**2 + 4.*tau*F1*F2)
@@ -107,7 +108,7 @@ def antiNCpxsec(Q2,enu,GaS,MA,FS,muS):
     C   = 0.25*(FA**2 + F1**2 + tau*F2**2)
     
     # cross-section
-    dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A + (su/Mp**2)*B + (su**2/Mp**4)*C)
+    dsigNC = GF**2*Mp**2/(8.*pival*enu**2)*(A - (su/Mp**2)*B + (su**2/Mp**4)*C)
 
     return dsigNC
 
